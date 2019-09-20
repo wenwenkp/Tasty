@@ -2,37 +2,28 @@
 {% load static %}
 {% block content %}
 
-<h1 style="color: #d53c3c;text-shadow:2.5px -1.5px black">Restaurant Detail</h1>
+<h1 style="color: #d53c3c;text-shadow:2.5px -1.5px black">{{restaurant.name}}</h1>
 
 <div class="card" id="card">
 	<div class="card-content" id="card-content">
 		<br>
 		<div id="content">
-			<img class="food-img" id="detail-img" src="{{restaurant.restaurant_photo}}"><br>
+			<img class="restaurant-img" id="detail-img" src="{{restaurant.restaurant_photo}}"><br>
 			<div id="details">
 				<p id="p-title-name"> {{ restaurant.name }}</p>
 				<hr>
-				<p class="p-details">{{restaurant.address}}</p><br>
-				<p class="p-details">{{restaurant.phone}}</p><br>
-			</div>
-		</div>
-		<div>
-			<div id="content2">
-				<div>
-					<iframe id="map" width="300" height="225" frameborder="0" style="border:3px solid gray"
-						src="{{map}}q={{restaurant.address}}" allowfullscreen>
-					</iframe><br><br>
-				</div>
-				<div style="display: flex; align-items:center">
-					<p id="p-details-desc">{{restaurant.description}}</p>
-				</div>
+				<i class="small material-icons">location_on</i><span class="p-details">{{restaurant.address}}</span><br>
+				<i class="small material-icons">local_phone</i><span class="p-details">{{restaurant.phone}}</span><br>
+				<i class="small material-icons">description</i><span id="p-details-desc">{{restaurant.description}}</span>
 			</div>
 		</div>
 		<div id="detail-btns">
 			{% if request.user == restaurant.user %}
-			<button style="height: 36px;"><a href="{% url 'restaurant_update' restaurant.id %}">Edit</a></button>
-			<button data-target="restaurant{{restaurant.name}}{{restaurant.id}}" class="btn modal-trigger"
-				style="border: 2px solid white;margin: -5px 10px;">Add Photo</button>
+			<div class="restaurant-btn">
+				<button style="height: 36px;"><a href="{% url 'restaurant_update' restaurant.id %}">Edit</a></button>
+				<button data-target="restaurant{{restaurant.name}}{{restaurant.id}}" class="btn modal-trigger"
+					style="border: 2px solid white;margin-top:20px;">Add Photo</button>
+			</div>
 			<div id="restaurant{{restaurant.name}}{{restaurant.id}}" class="modal">
 				<div class="modal-content">
 					<form action="{% url 'add_restaurant_photo' restaurant.id %}" enctype="multipart/form-data"
@@ -54,8 +45,16 @@
 		</div>
 	</div>
 </div>
-<br>
+
+<div class="container restaurant-map">
+	<iframe width="800" height="200" frameborder="0" style="border:3px solid gray" src="{{map}}q={{restaurant.address}}"
+		allowfullscreen>
+	</iframe><br><br>
+</div>
+
+
 <hr>
+
 <div class="card-content">
 	<span class="card-title" style="display: inline-block; color: white">
 		<h1 style="color: #d53c3c;text-shadow:2.5px -1.5px black">Menus</h1>
@@ -66,49 +65,59 @@
 			href="{% url 'menu_create' restaurant.id %}" style="color: WHITE">Add A Menu</a></button>
 	{% endif %}
 </div><br>
-{% for menu in menus %}
-<a href="{% url 'menu_detail' menu.id %}">
-	<div class="card" style="border: 4px solid gray">
-		<div class="card-content" style="background: linear-gradient(#8d2d56, #0d050e)">
-			<img style="height: 350px;width: 350px;border: 4px solid gray;border-radius: 5px;"
-				src="{{menu.menu_photo}}"><br>
-			<span class="dropdown" style="display: inline-block">
-				<h2 style="color: white">{{ menu.name }}</h2>
-			</span><br>
-			{% if request.user == restaurant.user %}
-			<button
-				style="background: linear-gradient(#0d050e, #8d2d56); height: 35px; width: 170px;border: 2px solid white;color: white;text-shadow: .5px -.5px gray;padding: 10px"><a
-					href="{% url 'menu_update' menu.id %}" style="color: white">Edit Menu</a></button>
-			<button
-				style="background: linear-gradient(#0d050e, #8d2d56); height: 35px; width: 170px;border: 2px solid white;color: white;text-shadow: .5px -.5px black; padding: 10px"><a
-					href="{% url 'menu_delete' menu.id %}" style="color: white">Delete Menu</a></button>
-			<button
-				style="background: linear-gradient(#0d050e, #8d2d56); height: 35px; width: 170px;border: 2px solid white;color: white;text-shadow: .5px -.5px black;padding: 10px"><a
-					href="{% url 'delete_menu_photo' menu.id restaurant.id %}" style="color: white">Delete
-					picture</a></button>
-			<button data-target="menu{{menu.name}}{{menu.id}}" class="btn modal-trigger">Modal</button>
-			<div id="menu{{menu.name}}{{menu.id}}" class="modal">
-				<div class="modal-content">
-					<form action="{% url 'add_menu_photo' menu.id restaurant.id %}" enctype="multipart/form-data"
-						method="POST" class="card-content" style="padding:24px 0">
-						{% csrf_token %}
-						<br><input type="file" name="photo-file"
-							style="background: linear-gradient(#0d050e, #8d2d56);color: white">
-						<br><br>
-						<input type="submit" class="btn" value="Upload Photo"
-							style="background: linear-gradient(#0d050e, #8d2d56);border: 2px solid white;">
-					</form>
-					<div class="modal-footer">
-						<a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
-					</div>
+<div class="row">
+	{% for menu in menus %}
+	<div class="col s5">
+		<div style="border: 4px solid gray">
+			<div class="part-two" style="background: linear-gradient(#8d2d56, #0d050e)">
+				<div>
+					<img class="restaurant-img" src="{{menu.menu_photo}}"><br>
+					
 				</div>
+				
+				<div class="menu-btn">
+								<h4 style="color: white">{{ menu.name }}</h4>
+						<button class="btn"><a href="{% url 'menu_detail' menu.id %}">Detail</a></button>
+
+					{% if request.user == restaurant.user %}
+					
+						<button data-target="menu{{menu.name}}{{menu.id}}" class="btn modal-trigger">Settings</button>
+					
+					<div id="menu{{menu.name}}{{menu.id}}" class="modal">
+						<div class="modal-content">
+							<button
+								style="background: linear-gradient(#0d050e, #8d2d56); height: 35px; width: 170px;border: 2px solid white;color: white;text-shadow: .5px -.5px gray;padding: 10px"><a
+									href="{% url 'menu_update' menu.id %}" style="color: white">Edit Menu</a></button>
+							<button
+								style="background: linear-gradient(#0d050e, #8d2d56); height: 35px; width: 170px;border: 2px solid white;color: white;text-shadow: .5px -.5px black; padding: 10px"><a
+									href="{% url 'menu_delete' menu.id %}" style="color: white">Delete Menu</a></button>
+							<button
+								style="background: linear-gradient(#0d050e, #8d2d56); height: 35px; width: 170px;border: 2px solid white;color: white;text-shadow: .5px -.5px black;padding: 10px"><a
+									href="{% url 'delete_menu_photo' menu.id restaurant.id %}"
+									style="color: white">Delete
+									picture</a></button>
+							<form action="{% url 'add_menu_photo' menu.id restaurant.id %}"
+								enctype="multipart/form-data" method="POST" class="card-content" style="padding:24px 0">
+								{% csrf_token %}
+								<br><input type="file" name="photo-file"
+									style="background: linear-gradient(#0d050e, #8d2d56);color: white">
+								<br><br>
+								<input type="submit" class="btn" value="Upload Photo"
+									style="background: linear-gradient(#0d050e, #8d2d56);border: 2px solid white;">
+							</form>
+							<div class="modal-footer">
+								<a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+							</div>
+						</div>
+					</div>
+					{% endif %}
+				</div>
+
 			</div>
-			{% endif %}
 		</div>
 	</div>
-</a>
-{% endfor %}
-
+	{% endfor %}
+</div>
 <script>
 	$(document).ready(function () {
 		$('.modal').modal();
